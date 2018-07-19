@@ -1,11 +1,12 @@
 #!/bin/bash
 
-#enter your service key for Pagerduty
+#enter your service key
 echo "Enter your Pagerduty service key:"
 read -s service_key
 
 #create the state file
-touch /home/kolev/Documents/zombie_state.txt
+path=/home/kolev/Documents/zombie_state.txt
+touch $path
 
 #check for zombie processes and add them to variable
 zombies=`ps -aux | awk '{ if ($8 ~ /Z/) { print } }'`
@@ -36,7 +37,7 @@ trigger () {
     	}' \
     	https://events.pagerduty.com/generic/2010-04-15/create_event.json
 
-	done < <(comm -13 <( awk '{print $2}' /home/kolev/Documents/zombie_state.txt | sort)  <(ps -aux | awk '{ if ($8 ~ /Z/) { print $2} }' | sort))
+	done < <(comm -13 <( awk '{print $2}' $path | sort)  <(ps -aux | awk '{ if ($8 ~ /Z/) { print $2} }' | sort))
 
 
 }
@@ -59,7 +60,7 @@ resolve () {
 	    }' \
 	    "https://events.pagerduty.com/generic/2010-04-15/create_event.json"
 
-	done < <(comm -23 <( awk '{print $2}' /home/kolev/Documents/zombie_state.txt | sort)  <(ps -aux | awk '{ if ($8 ~ /Z/) { print $2} }' | sort))
+	done < <(comm -23 <( awk '{print $2}' $path | sort)  <(ps -aux | awk '{ if ($8 ~ /Z/) { print $2} }' | sort))
 
 }
 
@@ -70,25 +71,14 @@ if [ -z "$zombies" ]; then
 
 	resolve
 
-else
+else [ ! -z "$zombies" ] 
 
-	if [ ! -f /home/kolev/Documents/zombie_state.txt ]; then
+	#if there are zombies first resolve after it create alerts
 
-    	#create alerts when file is not found as there are some zombie processes
+	resolve
 
-    	trigger
-    	
-    else   	
-    	#when file exist first resolve old zombie alerts
-
-    	resolve
-
-    	#now create new alerts for the new zombies
-
-    	trigger
-
-	fi
+	trigger
 
 fi
 
-zombies_state=`ps -aux | awk '{ if ($8 ~ /Z/) { print } }' > /home/kolev/Documents/zombie_state.txt`
+zombies_state=`ps -aux | awk '{ if ($8 ~ /Z/) { print } }' > $path`
