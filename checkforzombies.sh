@@ -3,6 +3,7 @@
 #check for zobie processes
 zombies=`ps -aux | awk '{ if ($8 ~ /Z/) { print } }'`
 
+#add current date to variable
 date=$(date +"%Y-%m-%d %H:%M")
 
 if [ -z "$zombies" ]; then 
@@ -94,4 +95,5 @@ else
 
 fi
 
+#create state file
 zombies_state=`ps -aux | awk '{ if ($8 ~ /Z/) { print } }' > /home/kolev/Documents/zombie_state.txt`
