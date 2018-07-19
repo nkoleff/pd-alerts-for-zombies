@@ -71,7 +71,7 @@ if [ -z "$zombies" ]; then
 
 	resolve
 
-else [ ! -z "$zombies" ] 
+else
 
 	#if there are zombies first resolve after it create alerts
 
