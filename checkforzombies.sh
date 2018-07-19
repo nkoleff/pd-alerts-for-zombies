@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#check for zobie processes
+#enter your service key for Pagerduty
 echo "Enter your Pagerduty service key:"
 read -s service_key
 
