@@ -4,9 +4,11 @@
 echo "Enter your Pagerduty service key:"
 read -s service_key
 
-#create the state file
-path=/home/kolev/Documents/zombie_state.txt
-touch $path
+#create the state file if it does not exist
+path="/home/kolev/Documents/zombie_state.txt"
+if [ ! -f $path ]; then
+	touch $path
+fi
 
 #check for zombie processes and add them to variable
 zombies=`ps -aux | awk '{ if ($8 ~ /Z/) { print } }'`
@@ -71,7 +73,7 @@ if [ -z "$zombies" ]; then
 
 	resolve
 
-else
+else 
 
 	#if there are zombies first resolve after it create alerts
 
